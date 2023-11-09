@@ -30,6 +30,8 @@ namespace BlazorApp.Server
             services.AddDbContext<DatabaseContext>(options => options.UseSqlServer(Configuration.GetConnectionString("myconn")));
             services.AddTransient<IUser, UserManager>();
 
+            services.AddScoped<IColaService, ColaService>();
+
             services.AddControllersWithViews();
             services.AddRazorPages();
         }

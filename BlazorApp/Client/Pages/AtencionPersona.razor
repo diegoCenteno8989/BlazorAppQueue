@@ -1,0 +1,82 @@
+﻿@page "/atencionpersona"
+@using BlazorApp.Shared.Models
+@inject HttpClient httpClient
+<h3>Registro de Atención al Cliente</h3>
+
+<input type="text" @bind="id" placeholder="ID" />
+<br />
+<input type="text" @bind="nombre" placeholder="Nombre" />
+<br />
+@*<select @bind="colaId">
+    <option value="1">Cola 1</option>
+    <option value="2">Cola 2</option>
+</select>
+<br />*@
+<button @onclick="RegistrarPersona">Registrar</button>
+
+<br />
+
+<h3>Cola 1</h3>
+<ul>
+    @foreach (var persona in personasCola1)
+    {
+        <li>@persona.Nombre</li>
+    }
+</ul>
+
+<h3>Cola 2</h3>
+<ul>
+    @foreach (var persona in personasCola2)
+    {
+        <li>@persona.Nombre</li>
+    }
+</ul>
+
+
+@code {
+    private int id;
+    private string nombre = string.Empty;
+    private int colaId = 1;
+
+    private List<Persona> personasCola1 = new List<Persona>();
+    private List<Persona> personasCola2 = new List<Persona>();
+
+
+    private async Task RegistrarPersona()
+    {
+        var personaViewModel = new PersonaViewModel
+        {
+            Id = id,
+            Nombre = nombre,
+            ColaId = colaId
+        };
+
+        var response = await httpClient.PostAsJsonAsync("api/manejocola", personaViewModel);
+
+        if (response.IsSuccessStatusCode)
+        {
+            // Persona registrada exitosamente
+            id = 0;
+            nombre = string.Empty;
+        }
+        else
+        {
+            // Manejar el error, si es necesario
+        }
+    }
+
+        protected override async Task OnInitializedAsync()
+        {
+            try
+            {
+            var reponse = await httpClient.GetFromJsonAsync<List<Persona>>("api/manejocola/1");
+                //personasCola1 = await httpClient.GetFromJsonAsync<List<Persona>>("api/manejocola/1");
+                //personasCola2 = await httpClient.GetFromJsonAsync<List<Persona>>("api/manejocola/2");
+            }
+            catch (HttpRequestException e)
+            {
+                // Manejar la excepción (por ejemplo, registrarla o mostrar un mensaje de error al usuario)
+                Console.WriteLine($"Error al obtener datos de la API: {e.Message}");
+            }
+        }
+}
