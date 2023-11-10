@@ -61,22 +61,27 @@
         }
         else
         {
-            // Manejar el error, si es necesario
+            Console.WriteLine($"{response.StatusCode}");
         }
     }
 
-        protected override async Task OnInitializedAsync()
+
+    protected override async Task OnInitializedAsync()
+    {
+        await ObenerColas();
+    }
+    protected async Task ObenerColas()
+    {
+
+        try
         {
-            try
-            {
-            var reponse = await httpClient.GetFromJsonAsync<List<Persona>>("api/manejocola/1");
-                //personasCola1 = await httpClient.GetFromJsonAsync<List<Persona>>("api/manejocola/1");
-                //personasCola2 = await httpClient.GetFromJsonAsync<List<Persona>>("api/manejocola/2");
-            }
-            catch (HttpRequestException e)
-            {
-                // Manejar la excepción (por ejemplo, registrarla o mostrar un mensaje de error al usuario)
-                Console.WriteLine($"Error al obtener datos de la API: {e.Message}");
-            }
+
+            personasCola1 = await httpClient.GetFromJsonAsync<List<Persona>>("api/manejocola/buscarcolaporid/1");
+            personasCola2 = await httpClient.GetFromJsonAsync<List<Persona>>("api/manejocola/buscarcolaporid/2");
         }
+        catch (HttpRequestException e)
+        {
+            Console.WriteLine($"Error al obtener datos de la API: {e.Message}");
+        }
+    }
 }

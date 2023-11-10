@@ -35,11 +35,10 @@ namespace BlazorApp.Server.Controllers
             return Ok();
         }
 
-        [HttpGet("manejocola/{colaId}")]
-        public IActionResult ObtenerCola(int colaId)
+        [HttpGet("buscarcolaporid/{id}")]
+        public async Task<ActionResult<IEnumerable<Persona>>> ObtenerColaPorId(int id)
         {
-            var personasEnCola = _colaService.ObtenerCola(colaId);
-            return Ok(personasEnCola);
+            return await _colaService.ObtenerColaAsync(id);
         }
     }
 }

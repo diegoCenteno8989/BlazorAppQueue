@@ -9,6 +9,6 @@ namespace BlazorApp.Server.Interfaces
     public interface IColaService
     {
         void AgregarPersona(Persona persona);
-        List<Persona> ObtenerCola(int colaId);
+        Task<List<Persona>> ObtenerColaAsync(int colaId);
     }
 }

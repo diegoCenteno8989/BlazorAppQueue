@@ -1,9 +1,11 @@
 ﻿using BlazorApp.Server.Interfaces;
 using BlazorApp.Server.Models;
 using BlazorApp.Shared.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace BlazorApp.Server.Services
 {
@@ -61,16 +63,42 @@ namespace BlazorApp.Server.Services
             return ultimaPersonaEnCola.TiempoRegistro.AddMinutes(tiempoAtencion);
         }        
 
-        public List<Persona> ObtenerCola(int colaId)
+        public async Task<List<Persona>> ObtenerColaAsync(int colaId)
         {
-            //var personasEnCola = _dbContext.Persona.Where(p => p.ColaId == colaId && p.TiempoRegistro.AddMinutes(p.ColaId == 1 ? 2 : 3) > DateTime.Now).ToList();
-            //return personasEnCola;
+
+            VerificarYEliminarPersonasAtendidas(colaId);
+
             var tiempoLimite = DateTime.Now.AddMinutes(colaId == 1 ? 2 : 3);
-            var personasEnCola = _dbContext.Persona
+            var personasEnCola = await _dbContext.Persona
                 .Where(p => p.ColaId == colaId && p.TiempoRegistro <= tiempoLimite)
-                .ToList();
+                .ToListAsync();
 
             return personasEnCola;
         }
+
+        private void VerificarYEliminarPersonasAtendidas(int colaId)
+        {
+            var tiempoActual = DateTime.Now;
+
+            // Filtra las personas en la cola y las elimina si ya fueron atendidas
+            var personasEnCola = _dbContext.Persona
+                .Where(p => p.ColaId == colaId)
+                .ToList();
+
+            foreach (var persona in personasEnCola)
+            {
+                var tiempoFinAtencion = persona.TiempoRegistro.AddMinutes(colaId == 1 ? 2 : 3);
+
+                // Comparamos directamente con el tiempo actual
+                if (tiempoFinAtencion <= tiempoActual)
+                {
+                    _dbContext.Persona.Remove(persona);
+                }
+            }
+
+            _dbContext.SaveChanges();
+        }
+
+
     }
 }
