@@ -7,11 +7,6 @@
 <br />
 <input type="text" @bind="nombre" placeholder="Nombre" />
 <br />
-@*<select @bind="colaId">
-    <option value="1">Cola 1</option>
-    <option value="2">Cola 2</option>
-</select>
-<br />*@
 <button @onclick="RegistrarPersona">Registrar</button>
 
 <br />
@@ -65,14 +60,12 @@
         }
     }
 
-
     protected override async Task OnInitializedAsync()
     {
         await ObenerColas();
     }
     protected async Task ObenerColas()
     {
-
         try
         {
 
